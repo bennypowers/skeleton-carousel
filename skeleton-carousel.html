@@ -512,6 +512,13 @@
             computed: '_computeContainerHeight(direction, total)',
             readOnly: true,
           },
+
+          /** Minimum number of pixels required to constitute a swipe */
+          threshold: {
+            type: Number,
+            value: 0,
+          },
+
           /**
            * X Axis position (0 - 1)
            */
@@ -847,12 +854,17 @@
           }
         }
         switch (event.detail.state) {
-          case 'track':
+          case 'track': {
             this._autoAnimate(false);
             this._x = finalPositionLeft;
             this._y = finalPositionTop;
-            this._setSwiping(true);
+            const swiping =
+                (this.direction === 'horizontal' && x > this.threshold) ? true
+              : (this.direction === 'vertical' && y > this.threshold) ? true
+              : false;
+            this._setSwiping(swiping);
             break;
+          }
           case 'end':
             this._autoAnimate(this.auto);
             this._x = 0;
